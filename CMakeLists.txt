@@ -13,5 +13,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 # OpenCV Package
 find_package( OpenCV REQUIRED )
 
-add_executable( COLOR_REDUCTION src/color_reduction.cpp )
-target_link_libraries( COLOR_REDUCTION ${OpenCV_LIBS} )
+link_libraries(${OpenCV_LIBS})
+
+# opencv_playground library
+add_library(OPENCV_PLAYGROUND 
+  src/utils/algorithms/segmentation.cpp
+  src/classes/mog.cpp)
+target_include_directories(OPENCV_PLAYGROUND PUBLIC include)
+
+add_executable( COLOR_REDUCTION src/basics/color_reduction.cpp )
+add_executable( BASIC_FILTERS src/basics/basic_filters.cpp )
+add_executable( EDGE_DETECTION src/basics/edge_detection.cpp )
+
+add_executable( BG_SUBSTRACTION src/segmentation/bg_substraction.cpp )
+target_link_libraries( BG_SUBSTRACTION PRIVATE OPENCV_PLAYGROUND )
