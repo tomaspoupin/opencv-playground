@@ -44,4 +44,80 @@ namespace cvpg
     {
         mog.apply(src, fg);
     }
+
+    double basicKmeansElbowSegmentation(cv::Mat &featureMat, cv::Mat &labels, cv::Mat &centroids, 
+        int attemps, int numIter, int range)
+    {
+        double distortion[range];
+        double lastSlope = 0, maxDiff = -1, lastDistortion;
+        cv::Mat lastLabels, lastClusters;
+
+        for (int k = 1; k <= range; ++k)
+        {
+            cv::Mat bestLabels, clusterCenters;
+            cv::TermCriteria critera;
+
+            critera.type = critera.COUNT;
+            critera.maxCount = numIter;
+
+            double compactness = cv::kmeans(
+                featureMat,
+                k,
+                bestLabels,
+                critera, attemps,
+                cv::KMEANS_RANDOM_CENTERS,
+                clusterCenters);
+
+            distortion[k - 1] = compactness / featureMat.size().height;
+
+            if (k == 2)
+            {
+                lastSlope = lastDistortion - distortion[k - 1];
+            }
+            else if (k > 2)
+            {
+                double slope = lastDistortion - distortion[k - 1];
+
+                if (slope < 0)
+                    continue;
+
+                double diff = lastSlope - slope;
+
+                if (diff < maxDiff)
+                    break;
+
+                maxDiff = diff;
+                lastSlope = slope;
+            }
+
+            if (k != range)
+            {
+                lastLabels = bestLabels;
+                lastClusters = clusterCenters;
+                lastDistortion = distortion[k - 1];
+            }
+        }
+
+        centroids = lastClusters;
+        labels = lastLabels;
+    }
+
+    double basicKmeansSegmentation(cv::Mat &featureMat, cv::Mat &labels, cv::Mat &centroids,
+        int clusters, int attemps, int numIter)
+    {
+        cv::TermCriteria critera;
+
+        critera.type = critera.COUNT;
+        critera.maxCount = numIter;
+
+        double compactness = cv::kmeans(
+            featureMat,
+            clusters,
+            labels,
+            critera, attemps,
+            cv::KMEANS_RANDOM_CENTERS,
+            centroids);
+
+        return compactness;
+    }
 } // namespace cvpg

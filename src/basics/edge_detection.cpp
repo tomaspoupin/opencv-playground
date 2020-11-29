@@ -3,10 +3,10 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #define INHERIT -1
-const double sigma = 2.0;
+const double sigma = 1.0;
 const int ksize = 3;
 const int minThreshold = 50;
-const int maxThreshold = 150;
+const int maxThreshold = 120;
 
 int main(int argc, char **argv)
 {

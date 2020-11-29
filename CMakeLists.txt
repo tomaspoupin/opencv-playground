@@ -27,3 +27,6 @@ add_executable( EDGE_DETECTION src/basics/edge_detection.cpp )
 
 add_executable( BG_SUBSTRACTION src/segmentation/bg_substraction.cpp )
 target_link_libraries( BG_SUBSTRACTION PRIVATE OPENCV_PLAYGROUND )
+
+add_executable( TESTS src/tests.cpp )
+target_link_libraries( TESTS PRIVATE OPENCV_PLAYGROUND )
